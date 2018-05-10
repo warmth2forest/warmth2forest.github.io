@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="这是第二篇关于 Javascript 实现方法的总结文章，主要是总结从 ES5 到 ES6 中的各种数组遍历方式，以及使用这些方法可能会遇到的坑。当然了，刚开始总结的一定不会很全面，也希望有更多想法和问题的小伙伴可以大家一起交流，文章也会一直完善下去，虽然不一定会有人看，哈哈，那开始吧！  Javascript 有很多数组遍历的方法，我们先从传统的遍历方法开始，然后再引入ES6的新方法： 1.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Javascript 的最佳实现方法总结（二）">
+<meta property="og:url" content="http://www.xiaozixiang.com/2018/05/10/bestjs2/index.html">
+<meta property="og:site_name" content="Xiao&#39;s Home">
+<meta property="og:description" content="这是第二篇关于 Javascript 实现方法的总结文章，主要是总结从 ES5 到 ES6 中的各种数组遍历方式，以及使用这些方法可能会遇到的坑。当然了，刚开始总结的一定不会很全面，也希望有更多想法和问题的小伙伴可以大家一起交流，文章也会一直完善下去，虽然不一定会有人看，哈哈，那开始吧！  Javascript 有很多数组遍历的方法，我们先从传统的遍历方法开始，然后再引入ES6的新方法： 1.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/5236403-7796f9caf62ceb90.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-05-10T04:29:42.403Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Javascript 的最佳实现方法总结（二）">
+<meta name="twitter:description" content="这是第二篇关于 Javascript 实现方法的总结文章，主要是总结从 ES5 到 ES6 中的各种数组遍历方式，以及使用这些方法可能会遇到的坑。当然了，刚开始总结的一定不会很全面，也希望有更多想法和问题的小伙伴可以大家一起交流，文章也会一直完善下去，虽然不一定会有人看，哈哈，那开始吧！  Javascript 有很多数组遍历的方法，我们先从传统的遍历方法开始，然后再引入ES6的新方法： 1.">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/5236403-7796f9caf62ceb90.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.xiaozixiang.com/2018/05/10/bestjs2/"/>
+
+
+
+
+
+  <title>Javascript 的最佳实现方法总结（二） | Xiao's Home</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Xiao's Home</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-简书">
+          <a href="https://www.jianshu.com/u/d877bc182fb4" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简书
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-微博">
+          <a href="https://weibo.com/u/2834174855" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-weibo"></i> <br />
+            
+            微博
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-github">
+          <a href="https://github.com/warmth2forest" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-github"></i> <br />
+            
+            GitHub
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.xiaozixiang.com/2018/05/10/bestjs2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xiaozixiang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Xiao's Home">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Javascript 的最佳实现方法总结（二）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-10T12:28:58+08:00">
+                2018-05-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="http://upload-images.jianshu.io/upload_images/5236403-7796f9caf62ceb90.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Javascript 的数组遍历方法总结"></p>
+<blockquote>
+<p>这是第二篇关于 Javascript 实现方法的总结文章，主要是总结从 ES5 到 ES6 中的各种数组遍历方式，以及使用这些方法可能会遇到的坑。当然了，刚开始总结的一定不会很全面，也希望有更多想法和问题的小伙伴可以大家一起交流，文章也会一直完善下去，虽然不一定会有人看，哈哈，那开始吧！</p>
+</blockquote>
+<p>Javascript 有很多数组遍历的方法，我们先从传统的遍历方法开始，然后再引入<code>ES6</code>的新方法：</p>
+<h3 id="1-while"><a href="#1-while" class="headerlink" title="1. while"></a>1. while</h3><p>传统方法<code>while</code>理解起来很简单，给个<code>index</code>然后每次让<code>index ++</code>就ok了。然后我们引入了一个新的概念，就是<code>ES6</code>中的新语法<code>...</code>，它可以用于但不仅限于数组和对象的的扩展和解构，从一定程度讲，把它用好了在某种程度上就基本可以抛弃<code>ES5</code>里面像<code>concat</code>、<code>slice</code>等等的数组拼接方法了（只是说基本，目前还不敢全扔）。<br>关于<code>ES6</code>的用法已经基本整理好了，在未来两三个星期会陆续发，希望到时候可以关注。这里扔一个权威的传送门，阮一峰老师的《ECMAScript 6入门》：<a href="http://es6.ruanyifeng.com/" target="_blank" rel="noopener">http://es6.ruanyifeng.com/</a></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">whileLooping</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> index = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span>(index &lt; args.length)&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(args[index])</span><br><span class="line">        index ++</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> flag = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">whileLooping(<span class="string">'java'</span>, <span class="string">'python'</span>, <span class="string">'c'</span>, <span class="string">'c++'</span>, <span class="string">'ruby'</span>) </span><br><span class="line"><span class="comment">// java python c c++ ruby</span></span><br><span class="line">whileLooping(<span class="string">'java'</span>, <span class="string">'python'</span>, <span class="string">'c'</span>, <span class="string">'c++'</span>, <span class="string">'ruby'</span>, flag) </span><br><span class="line"><span class="comment">// java python c c++ ruby [1, 2, 3, 4]</span></span><br></pre></td></tr></table></figure>
+<p>很简单，主要是为了做一个关于<code>...</code>语法的引子，让大家多使用更便捷的方法（虽然这里这么写好像有些鸡肋）。</p>
+<h3 id="2-for（传统方法里用的最多的）"><a href="#2-for（传统方法里用的最多的）" class="headerlink" title="2. for（传统方法里用的最多的）"></a>2. for（传统方法里用的最多的）</h3><p>这个我觉得不管是写什么的都比我熟，所以先象征性地扔一波看起来鸡肋又尴尬的代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">forLooping</span>(<span class="params">array = [a = <span class="number">10</span>, b = <span class="number">20</span>, ...args], nothing = <span class="number">20</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; array.length; i++) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(array[i])</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">console</span>.log(nothing)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">forLooping([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br><span class="line"><span class="comment">// 1 2 3 4 5 20</span></span><br><span class="line">forLooping([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="number">10</span>)</span><br><span class="line"><span class="comment">// 1 2 3 4 5 10</span></span><br></pre></td></tr></table></figure>
+<p>虽然这里涉及了<code>ES6</code>里的默认参数值以及<code>...</code>的另一种用法，但看起来都容易理解，就不多哔哔。接下来要分享的是一个我曾经在用<code>for</code>循环遇到的一个坑，关于作用域的。<br>大家可以尝试把<code>let</code>变成<code>var</code>，看看输出结果有什么变化吗？并没有。<br>但是在接下来这段代码里好像就不太一样了：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> array = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">	array.push(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(i)          </span><br><span class="line">	&#125;)  	</span><br><span class="line">&#125;</span><br><span class="line">array[<span class="number">0</span>]() <span class="comment">// 5</span></span><br><span class="line">array[<span class="number">1</span>]() <span class="comment">// 5</span></span><br><span class="line">array[<span class="number">2</span>]() <span class="comment">// 5</span></span><br><span class="line">array[<span class="number">3</span>]() <span class="comment">// 5</span></span><br><span class="line">array[<span class="number">4</span>]() <span class="comment">// 5</span></span><br><span class="line"><span class="built_in">console</span>.log(array) <span class="comment">// [ [Function], [Function], [Function], [Function], [Function] ]</span></span><br></pre></td></tr></table></figure></p>
+<p>明明<code>push</code>到数组里的看起来都是不一样的值，可是最后一跑就发现输出了没有一个值是对的。这是在<code>var</code>声明的时候，被引用的外部作用域中只有一个<code>i</code>，而不是为每次迭代的函数都有一个<code>i</code>被引用。如果你用<code>let</code>声明<code>i</code>，输出的值就会是<code>0 1 2 3 4</code>。这关系到<code>var</code>和<code>let</code>的区别，上面给的传送门里有介绍到，而我之后的<code>ES6</code>系列也会解释到，这里也不多哔哔了。<br>还有一件事就是，在某些博客上有人说<code>const</code>是用来声明常量的，可我们这里的<code>array</code>还能改变，这是因为用<code>const</code>声明值类型变量之后不能继续赋值，但是声明的引用类型变量还是可以被改变的。</p>
+<h3 id="3-forEach"><a href="#3-forEach" class="headerlink" title="3. forEach"></a>3. forEach</h3><p>这个是新方法里最基础的一个，唯一要注意的是<code>IE 9</code>以下浏览器不兼容。用的时候要向里面扔三个参数：</p>
+<ul>
+<li>currentValue（必需）：当前元素；</li>
+<li>index（可选）：当前元素索引值；</li>
+<li>arr（可选）：当前元素所属的数组对象。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">forEachLooping</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">	args.forEach(<span class="function">(<span class="params">current_value, index, arr</span>) =&gt;</span> &#123;</span><br><span class="line">		<span class="built_in">console</span>.log(current_value, index, arr)</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">forEachLooping(<span class="string">'java'</span>, <span class="string">'python'</span>, <span class="string">'c'</span>, <span class="string">'c++'</span>, <span class="string">'ruby'</span>)</span><br><span class="line"><span class="comment">// java   0 [ 'java', 'python', 'c', 'c++', 'ruby' ]</span></span><br><span class="line"><span class="comment">// python 1 [ 'java', 'python', 'c', 'c++', 'ruby' ]</span></span><br><span class="line"><span class="comment">// c      2 [ 'java', 'python', 'c', 'c++', 'ruby' ]</span></span><br><span class="line"><span class="comment">// c++    3 [ 'java', 'python', 'c', 'c++', 'ruby' ]</span></span><br><span class="line"><span class="comment">// ruby   4 [ 'java', 'python', 'c', 'c++', 'ruby' ]</span></span><br></pre></td></tr></table></figure>
+<p>箭头函数<code>=&gt;</code>用法值得关注，很好用，会在<code>ES6</code>系列里面具体介绍到。其它暂时没发现什么值得特别提的点，如果有小伙伴遇到这个东西的坑，希望可以跟我说一下，我们一起进步哈！</p>
+<h3 id="4-map"><a href="#4-map" class="headerlink" title="4. map"></a>4. map</h3><p>这里的<code>map</code>不是<code>地图</code>的意思，而是指<code>映射</code>，很好理解，就是原数组被<code>映射</code>成新的数组。在<code>forEach</code>方法中，并不会返回一个新的数组，而<code>map</code>则是对数组的每个元素使用一个函数，然后返回一个全新的数组。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">mapLooping</span>(<span class="params">information</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">const</span> formatInfo = information.map(<span class="function"><span class="params">info</span> =&gt;</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">`姓名：<span class="subst">$&#123;info.name&#125;</span>，年龄：<span class="subst">$&#123;info.age&#125;</span>`</span></span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="built_in">console</span>.log(formatInfo)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> information = [</span><br><span class="line">	&#123;<span class="attr">name</span>: <span class="string">'zixiang.xiao'</span>, <span class="attr">age</span>: <span class="number">22</span>&#125;,</span><br><span class="line">	&#123;<span class="attr">name</span>: <span class="string">'tong.li'</span>, <span class="attr">age</span>: <span class="number">22</span>&#125;,</span><br><span class="line">	&#123;<span class="attr">name</span>: <span class="string">'meimei.han'</span>, <span class="attr">age</span>: <span class="number">30</span>&#125;</span><br><span class="line">]</span><br><span class="line">mapLooping(information)</span><br><span class="line"><span class="comment">// [ '姓名：zixiang.xiao，年龄：22', </span></span><br><span class="line"><span class="comment">//   '姓名：tong.li，年龄：22', </span></span><br><span class="line"><span class="comment">//   '姓名：meimei.han，年龄：30' ]</span></span><br></pre></td></tr></table></figure></p>
+<p>上面的代码也引入了<code>ES6</code>模板字符串的概念，书写起来相当方便，没什么特别的概念，有兴趣可以去了解一下。<br>关于<code>map</code>的兼容性，它不兼容<code>IE 9</code>以下版本的浏览器，如果非要在<code>IE 6-8</code>之间使用的话，也可以在<code>Array.prototype</code>里面进行扩展：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="built_in">Array</span>.prototype.map != <span class="string">"function"</span>) &#123;</span><br><span class="line">    <span class="built_in">Array</span>.prototype.map = <span class="function"><span class="keyword">function</span> (<span class="params">fn, context</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> arr = []</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> fn === <span class="string">"function"</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> k = <span class="number">0</span>, length = <span class="keyword">this</span>.length; k &lt; length; k++) &#123;      </span><br><span class="line">           arr.push(fn.call(context, <span class="keyword">this</span>[k], k, <span class="keyword">this</span>))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">      <span class="keyword">return</span> arr</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="5-reduce"><a href="#5-reduce" class="headerlink" title="5. reduce"></a>5. reduce</h3><p>从某种程度上说<code>reduce</code>像是一个累加器，它会在数组中从左到右依次遍历，最终返回一个经过函数处理后的累积值。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reduceLooping</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">const</span> array_sum = args.reduce(<span class="function">(<span class="params">x, y</span>) =&gt;</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> x + y</span><br><span class="line">	&#125;, <span class="number">10</span>)</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">`初始值为10的array_sum累加之后结果为：<span class="subst">$&#123;array_sum&#125;</span>`</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">reduceLooping(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>)</span><br><span class="line"><span class="comment">// 初始值为10的array_sum累加之后结果为：25</span></span><br></pre></td></tr></table></figure></p>
+<p>还有一个值得关注的点，如果数组处理之后需要返回一个累积值的时候，推荐使用<code>reduce</code>，从一个最直接的角度来说，据统计<code>reduce</code>的运算速度比<code>for</code>快几十倍。同样的，<code>reduce</code>只兼容<code>IE 9</code>及其以上的浏览器。</p>
+<h3 id="6-filter"><a href="#6-filter" class="headerlink" title="6. filter"></a>6. filter</h3><p>跟名字一样，<code>filter</code>方法就是用来对一个数组进行过滤的。和之前的方法不一样的一点在于，<code>filter</code>的<code>callback</code>函数返回的是一个<code>Boolean</code>值。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filterLooping</span>(<span class="params">array</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">const</span> after = array.filter(<span class="function"><span class="params">name</span> =&gt;</span> name.indexOf(<span class="string">'D'</span>) &gt;= <span class="number">0</span>)</span><br><span class="line">	<span class="built_in">console</span>.log(after)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> name = [<span class="string">'Durant'</span>,<span class="string">'James'</span>,<span class="string">'Bryant'</span>,<span class="string">'Duncan'</span>,<span class="string">'Curry'</span>]</span><br><span class="line">filterLooping(name)</span><br><span class="line"><span class="comment">// [ 'Durant', 'Duncan' ]</span></span><br></pre></td></tr></table></figure></p>
+<p><code>filter</code>只兼容<code>IE 9</code>及其以上的浏览器。</p>
+<h3 id="7-every"><a href="#7-every" class="headerlink" title="7. every"></a>7. every</h3><p>关于<code>every</code>方法，用于检测数组所有元素是否都符合指定条件,使用指定函数检测数组中的所有元素：</p>
+<ul>
+<li>如果数组中检测到有一个元素不满足，则整个表达式返回<code>false</code>，且剩余的元素不会再进行检测；</li>
+<li>如果所有元素都满足条件，则返回<code>true</code>。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">everyLooping</span>(<span class="params">array</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">let</span> truth = array.every(<span class="function"><span class="params">user</span> =&gt;</span> user.indexOf(<span class="string">'cool'</span>) &gt;= <span class="number">0</span>)</span><br><span class="line">	<span class="keyword">if</span>(truth) &#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'都很帅！'</span>); </span><br><span class="line">	&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'并不是所有人都很帅！'</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> user = [<span class="string">'zixiang.xiao, cool'</span>,<span class="string">'lei.li, 9'</span>,<span class="string">'meimei.han, 9'</span>,<span class="string">'mou.liu, pdd'</span>,<span class="string">'benwei.lu, ugly'</span>]</span><br><span class="line">everyLooping(user)</span><br><span class="line"><span class="comment">// 并不是所有人都很帅！</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>可解释的不多，<code>every</code>只兼容<code>IE 9</code>及其以上的浏览器。希望看完代码你不会觉得我厚颜无耻，就算你真这样觉得也没有什么用！</p>
+<h3 id="8-some"><a href="#8-some" class="headerlink" title="8. some"></a>8. some</h3><p><code>some</code>的用法和<code>every</code>其实差不多，只不过<code>some</code>的含义是判断一个数组上的元素是否至少有一个符合某种条件， 方法会依次执行数组的每个元素：</p>
+<ul>
+<li>如果有一个元素满足条件，则表达式返回<code>true</code>, 剩余的元素不会再执行检测；</li>
+<li>如果没有满足条件的元素，则返回<code>false</code>。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">someLooping</span>(<span class="params">array</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">let</span> truth = array.some(<span class="function"><span class="params">user</span> =&gt;</span> user.indexOf(<span class="string">'benwei.lu'</span>) &gt;= <span class="number">0</span>)</span><br><span class="line">	<span class="keyword">if</span>(truth) &#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'有人长得丑！'</span>); </span><br><span class="line">	&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'并没有特别丑的人！'</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> user = [<span class="string">'zixiang.xiao, cool'</span>,<span class="string">'lei.li, 9'</span>,<span class="string">'meimei.han, 9'</span>,<span class="string">'mou.liu, pdd'</span>,<span class="string">'benwei.lu, ugly'</span>]</span><br><span class="line">someLooping(user)</span><br><span class="line"><span class="comment">// 有人长得丑！</span></span><br></pre></td></tr></table></figure>
+<p>这个代码看完我相信你会觉得我说的真对！</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实每一种方法都有它特定的场景可以作为一个优秀的方案使用，作为一个前端小菜鸡，我也会多去尝试这些东西的使用，在一定的累积之后会继续写它们的应用。关于低版本浏览器不兼容的问题，之后我会在原文章上边添加关于低版本浏览器的兼容方法，不过目前我只能做到兼容到<code>IE6</code>，我相信也没多少人用更低的版本了，毕竟长得帅的人用浏览器都是与时俱进的！<br><strong>最后最后，如果你觉得我写的还行的话，就快给我点赞并且关注我吧！我会继续努力的！谢谢各位大佬！</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/10/bestjs1/" rel="next" title="Javascript 的最佳实现方法总结（一）">
+                <i class="fa fa-chevron-left"></i> Javascript 的最佳实现方法总结（一）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/10/event_loop/" rel="prev" title="浏览器和Node事件循环的区别">
+                浏览器和Node事件循环的区别 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">xiaozixiang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-while"><span class="nav-number">1.</span> <span class="nav-text">1. while</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-for（传统方法里用的最多的）"><span class="nav-number">2.</span> <span class="nav-text">2. for（传统方法里用的最多的）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-forEach"><span class="nav-number">3.</span> <span class="nav-text">3. forEach</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-map"><span class="nav-number">4.</span> <span class="nav-text">4. map</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-reduce"><span class="nav-number">5.</span> <span class="nav-text">5. reduce</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-filter"><span class="nav-number">6.</span> <span class="nav-text">6. filter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-every"><span class="nav-number">7.</span> <span class="nav-text">7. every</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-some"><span class="nav-number">8.</span> <span class="nav-text">8. some</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number"></span> <span class="nav-text">总结</span></a></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xiaozixiang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
